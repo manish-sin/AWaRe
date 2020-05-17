@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AWaRe</title>
+    <!-- //link the file to chart.js javascript file -->
+  <script src={{ url_for('static', filename='scripts/Chart.js') }}></script>
+    <!-- //link the file to css file -->
+  <!-- <link href={{ url_for('static', filename='style/tabs.css') }} rel="stylesheet" type="css"></link> -->
+  
+    
+  <h1 style="color:#5E5756">Activity Summary</h1>
+
+
+</head>
+ 
+
+<body>
+
+</body>
+
+
+
+    <!-- Tab links -->
+	<div>	<canvas id="pie-chart" width="300" height="100"></canvas></div>
+	
+	<div>	<canvas id="excel-chart" width="300" height="50"></canvas></div>
+	
+	<div>	<canvas id="chrome-chart" width="300" height="300"></canvas></div>
+	
+	
+<!-- <script>
+var x ="", i;
+for (i=1; i<=6; i++) {
+  x = x + "<h" + i + ">Heading " + i + "</h" + i + ">";
+}
+document.getElementById("demo").innerHTML = x;
+</script> -->
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+<script src={{ url_for('static', filename='scripts/report.js') }}></script>
+</html>
