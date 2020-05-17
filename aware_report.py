@@ -147,9 +147,12 @@ for app in app_list: #here we extact sub-apps list and cumulative duration for e
 # send "chart2_list" to Chart.js
 print(chart_list)
 #Define an flask server app
+
+app = Flask(__name__)
+socketio = SocketIO(app)
 @app.route('/')
 def index():
-    return render_template('chart.html')
+    return render_template('Awarness.html')
 #set a socket to send message
 @socketio.on('message')
 def message(data):
