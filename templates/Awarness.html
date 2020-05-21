@@ -1,14 +1,19 @@
 <!DOCTYPE html>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
 <html>
+
 <head>
   <title>AWaRe</title>
     <!-- //link the file to chart.js javascript file -->
   <script src={{ url_for('static', filename='scripts/Chart.js') }}></script>
+  
     <!-- //link the file to css file -->
   <!-- <link href={{ url_for('static', filename='style/tabs.css') }} rel="stylesheet" type="css"></link> -->
   
     
-  <h1 style="color:#5E5756">Activity Summary</h1>
+  
 
 
 </head>
@@ -17,25 +22,85 @@
 <body>
 
 </body>
+<script>
+function openCity(evt, cityName) {
+  // Declare all variables
+  var i, tabcontent, tablinks;
+
+  // Get all elements with class="tabcontent" and hide them
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+
+  // Get all elements with class="tablinks" and remove the class "active"
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+
+  // Show the current tab, and add an "active" class to the button that opened the tab
+  document.getElementById(cityName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+
+</script>
+    <!-- Tab links -->
+	<input type="date" id="start" name="trip-start"
+       value="2018-07-22"
+       min="2018-01-01" max="2018-12-31">
+	<script>
 
 
+  
+  function refreshDate(){ 
+	var y = document.getElementById("start").value;
+	console.log(`Date: ${y};`)}
+  
+  
+  
+
+</script>
+
+	<button class="go" onclick="refreshDate()" id = "go">GO</button>
+	
 
     <!-- Tab links -->
-	<div>	<canvas id="pie-chart" width="300" height="100"></canvas></div>
-	
-	<div>	<canvas id="excel-chart" width="300" height="50"></canvas></div>
-	
-	<div>	<canvas id="chrome-chart" width="300" height="300"></canvas></div>
-	
-	
-<!-- <script>
-var x ="", i;
-for (i=1; i<=6; i++) {
-  x = x + "<h" + i + ">Heading " + i + "</h" + i + ">";
-}
-document.getElementById("demo").innerHTML = x;
-</script> -->
     
+	  
+      <button class="tablinks" onclick="openCity(event, 'Activity Summary')" id="defaultOpen">Home</button>
+      <button class="tablinks" onclick="openCity(event, 'Activity Detail')" id = "detail" style="display: none">Activity Detail</button>
+      
+    
+
+    <!-- Tab content -->
+    <div id="Activity Summary" class="tabcontent">
+      <div>	<canvas id="pie-chart" width="300" height="100"></canvas></div>
+	  
+      
+	  
+    </div>
+
+    <div id="Activity Detail" class="tabcontent" >
+      <div id="chartu" ><canvas id="chrome-chart" width="300" height="200"></canvas></div>
+	
+	  </div>
+	  
+<script>
+// Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();
+</script>  
+  
+
 <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
-<script src={{ url_for('static', filename='scripts/report.js') }}></script>
+<script src={{ url_for('static', filename='scripts/report.js') }}></script>	
+	
+
+	
+	
+	
+	
+
+
+
 </html>
