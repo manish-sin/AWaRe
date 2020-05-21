@@ -10,7 +10,7 @@
   <script src={{ url_for('static', filename='scripts/Chart.js') }}></script>
   
     <!-- //link the file to css file -->
-  <!-- <link href={{ url_for('static', filename='style/tabs.css') }} rel="stylesheet" type="css"></link> -->
+  <link href={{ url_for('static', filename='style/tabs.css') }} rel="stylesheet" type="css"></link> 
   
     
   
@@ -48,21 +48,12 @@ function openCity(evt, cityName) {
     <!-- Tab links -->
 	<input type="date" id="start" name="trip-start"
        value="2018-07-22"
-       min="2018-01-01" max="2018-12-31">
-	<script>
+       min="2018-05-05" max="2018-12-31">
+	   
+	   
 
 
-  
-  function refreshDate(){ 
-	var y = document.getElementById("start").value;
-	console.log(`Date: ${y};`)}
-  
-  
-  
-
-</script>
-
-	<button class="go" onclick="refreshDate()" id = "go">GO</button>
+	<button class="go" id = "go">GO</button></div>
 	
 
     <!-- Tab links -->
@@ -75,14 +66,14 @@ function openCity(evt, cityName) {
 
     <!-- Tab content -->
     <div id="Activity Summary" class="tabcontent">
-      <div>	<canvas id="pie-chart" width="300" height="100"></canvas></div>
+		<div><canvas id="pie-chart" width="300" height="100"></canvas></div>
 	  
       
 	  
     </div>
 
     <div id="Activity Detail" class="tabcontent" >
-      <div id="chartu" ><canvas id="chrome-chart" width="300" height="200"></canvas></div>
+      <div><canvas id="chrome-chart" width="300" height="300"></canvas></div>
 	
 	  </div>
 	  
@@ -94,10 +85,6 @@ document.getElementById("defaultOpen").click();
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
 <script src={{ url_for('static', filename='scripts/report.js') }}></script>	
-	
-
-	
-	
 	
 	
 
