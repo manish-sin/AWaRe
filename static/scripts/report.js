@@ -3,19 +3,27 @@ document.addEventListener('DOMContentLoaded', ()=>{
 	var socket = io.connect('http://localhost:5000');
 
 	socket.on('connect', () => {
-		socket.send("I am connected");
+		socket.send("I am connected"); 
 	})
+	
+	
+	
+	
+	
+	
 
-
+	
 	socket.on('message', data=> {
 		<!-- var variable1 = localStorage.getItem("vOneLocalStorage "); */ -->
 		console.log(`Apps Names: ${data[0][0]};`)
 		console.log(`Apps Duration: ${data[0][1]};`)
-		console.log(`App COunt: ${data[0][2]};`)
+		console.log(`App Count: ${data[0][2]};`)
 		console.log(`Choosen Apps Name: ${data[1][2]};`)
 		console.log(`Sub-app Duration: ${data[1][1]};`)
 		console.log(`Sub-app Name: ${data[1][0]};`) 
 		console.log(`Sub_app Count: ${data[1][3]};`) 
+		
+	
 		
 		
 
@@ -95,20 +103,18 @@ document.addEventListener('DOMContentLoaded', ()=>{
         
         
 		
+		var y = "2020-05-22"
+		var dick = {year:y,app:label}
 		
-		socket.emit('msg',{label} );
+		socket.emit('msg',{dick} );
+		console.log(`Sub-app: ${y} , ${label} ;`)
 		document.getElementById("detail").click();
 		
 		
 		
 	  }	
 		
-	document.getElementById("go").onclick = function(){
 	
-	var y = document.getElementById("start").value;
-	console.log(`Date: ${y};`);
-	socket.emit('msg',{y});	
-	}
 		
 		
        
