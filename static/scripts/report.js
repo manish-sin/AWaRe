@@ -15,13 +15,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
 	
 	socket.on('message', data=> {
 		<!-- var variable1 = localStorage.getItem("vOneLocalStorage "); */ -->
-		console.log(`Apps Names: ${data[0][0]};`)
-		console.log(`Apps Duration: ${data[0][1]};`)
-		console.log(`App Count: ${data[0][2]};`)
+		/* console.log(`Apps Names: ${data[0][0]};`)
+		console.log(`Apps Duration: ${data[0][1]};`) */
+		/* console.log(`App Count: ${data[0][2]};`)*/
 		console.log(`Choosen Apps Name: ${data[1][2]};`)
-		console.log(`Sub-app Duration: ${data[1][1]};`)
-		console.log(`Sub-app Name: ${data[1][0]};`) 
-		console.log(`Sub_app Count: ${data[1][3]};`) 
+		/* console.log(`Sub-app Duration: ${data[1][1]};`)
+		console.log(`Sub-app Name: ${data[1][0]};`)  
+		console.log(`Sub_app Count: ${data[1][3]};`)*/ 
 		
 	
 		
@@ -81,14 +81,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
 		
 	};
 	var pie_chart = new Chart(document.getElementById("pie-chart"), a );
-	console.log(chrome_chart)
+	
 	
 	
 
 	
 	var chrome_chart = new Chart(document.getElementById("chrome-chart"), b);
-	chrome_chart.destroy();
-	chrome_chart = new Chart(document.getElementById("chrome-chart"), b);
+	
 
 	
 	document.getElementById("pie-chart").onclick = function(evt)
