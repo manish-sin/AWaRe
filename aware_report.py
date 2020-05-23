@@ -19,30 +19,33 @@ import socketio
 from flask import Flask, render_template, jsonify, url_for
 from flask_socketio import SocketIO, send, emit
 
-# Import the csv generated using the aware utility and converting the time string into date time format
-df = pd.read_csv("awl.csv", index_col='Unnamed: 0')
-# drop the first row which is used as a marker and to find the time difference between application
-df = df.drop(0)
-df = df.reset_index(drop=True)
-# Fill all the empty cell with Ideal value
-df.fillna('Ideal', inplace=True)
 
-# Step 2: CHART 1
-# Create a datafrme which cab be used to plot chart, in same way way as we do in excel. Alternative suggesion are welcome
-# Convert Datasheet into list
+def get_date_specific_log():
+    # Import the csv generated using the aware utility and converting the time string into date time format
+    df = pd.read_csv("awl.csv", index_col='Unnamed: 0')
+    # drop the first row which is used as a marker and to find the time difference between application
+    df = df.drop(0)
+    df = df.reset_index(drop=True)
+    # Fill all the empty cell with Ideal value
+    df.fillna('Ideal', inplace=True)
 
-# Filter out the Application name from the window and place them in new window
-# step 1: split the window name to extract application name i.1. the last string after a  "-"
-# Step 2: store the application name in the newly created Column -Application-
+    # Step 2: CHART 1
+    # Create a datafrme which cab be used to plot chart, in same way way as we do in excel. Alternative suggesion are welcome
+    # Convert Datasheet into list
 
-df["Application"] = 0  # new column created
-index = 0
-for window in df["Window"]:
-    app = window.split("-")  # Step 1
-    app = app[-1]
-    df.loc[index, "Application"] = app  # step2
-    index = index + 1
-df.head(50)
+    # Filter out the Application name from the window and place them in new window
+    # step 1: split the window name to extract application name i.1. the last string after a  "-"
+    # Step 2: store the application name in the newly created Column -Application-
+
+    df["Application"] = 0  # new column created
+    index = 0
+    for window in df["Window"]:
+        app = window.split("-")  # Step 1
+        app = app[-1]
+        df.loc[index, "Application"] = app  # step2
+        index = index + 1
+    df_date = df
+    return df_date
 
 # IMPROVEMENT
 # 1. Avoid Use of For Loop
@@ -52,42 +55,42 @@ df.head(50)
 # make a new entry as "misc" in the dataframe and duration will be sum of all these app
 # Convert the dataframe into list
 
+def chart_of_apps(df):
+    # Declearing a list which will be sent to chart.js
+    chart_list1 = []
 
-# Declearing a list which will be sent to chart.js
-chart_list1 = []
+    # Step1: Pivot table
+    app_chart1 = pd.pivot_table(df, values="Suration", index=["Application"], aggfunc=np.sum).reset_index()
+    # Threshold duration to conside if an app needs to be put in mislaneous category
+    thrashold = 30
+    # basic declearation for dataframe manupulation
+    low_threshold = 2
+    misc = 0
+    index = 0
+    misc_apps = []  # declearling enpty list to store apps which will be placed in mislaneous category
+    for item in app_chart1["Suration"]:
+        if (item < thrashold):  # Step 2: operation to be done for each row which are leaa than threshold
+            if (item > low_threshold):
+                misc = misc + item  # cumulative time of each app
+                misc_app = app_chart1["Application"][index]  # getting the name of sub-application to store in "misc_apps"
+                misc_apps.append(misc_app)  # step4: creating list misc_apps
+            app_chart1.drop([index], inplace=True)
+        index = index + 1
 
-# Step1: Pivot table
-app_chart1 = pd.pivot_table(df, values="Suration", index=["Application"], aggfunc=np.sum).reset_index()
-# Threshold duration to conside if an app needs to be put in mislaneous category
-thrashold = 30
-# basic declearation for dataframe manupulation
-low_threshold = 2
-misc = 0
-index = 0
-misc_apps = []  # declearling enpty list to store apps which will be placed in mislaneous category
-for item in app_chart1["Suration"]:
-    if (item < thrashold):  # Step 2: operation to be done for each row which are leaa than threshold
-        if (item > low_threshold):
-            misc = misc + item  # cumulative time of each app
-            misc_app = app_chart1["Application"][index]  # getting the name of sub-application to store in "misc_apps"
-            misc_apps.append(misc_app)  # step4: creating list misc_apps
-        app_chart1.drop([index], inplace=True)
-    index = index + 1
+    misc_entry = ["Miscellaneous", misc]
 
-misc_entry = ["Miscellaneous", misc]
-
-# Step 4: making entry of misc app in the dataframe
-if (misc > 0):
-    app_chart1.loc[len(app_chart1)] = misc_entry
-app_chart1 = app_chart1.reset_index(drop=True)
-app_chart1["SlNo"] = range(len(app_chart1))
-# step 5 convert data frme to list
-chart_list1.append(app_chart1.Application.tolist())
-app_chart1["Duration"] = (app_chart1.Suration / 60).astype('int32')
-chart_list1.append(app_chart1["Duration"].tolist())
-chart_list1.append(len(app_chart1))
-# print(chart_list1)
-# print(app_chart1)
+    # Step 4: making entry of misc app in the dataframe
+    if (misc > 0):
+        app_chart1.loc[len(app_chart1)] = misc_entry
+    app_chart1 = app_chart1.reset_index(drop=True)
+    app_chart1["SlNo"] = range(len(app_chart1))
+    # step 5 convert data frme to list
+    chart_list1.append(app_chart1.Application.tolist())
+    app_chart1["Duration"] = (app_chart1.Suration / 60).astype('int32')
+    chart_list1.append(app_chart1["Duration"].tolist())
+    chart_list1.append(len(app_chart1))
+    return chart_list1, misc_apps
+    # print(app_chart1)
 
 # Step 3: CHART 2
 # Create a datafrme for each section of Pie-chart which cab be used to plot chart, in same way way as we do in excel.
@@ -105,32 +108,32 @@ chart_list1.append(len(app_chart1))
 
 # Note1: by "application" or "apps" we refer to category of window usch as "Google Chrome" or "Excel"
 # Note2: by "sub-application" or sub-apps: we refer to file name under each window
+def chart_of_subapps(df,misc_apps, app_name):
+    # Step 1: Catagorise app with small duration into a "misc" app category
+    index = 0
+    for app in df["Application"]:
+        if (app in misc_apps):  # misc_apps is list of application/windows which were used for less than threshold time
+            df.loc[index, "Application"] = "Miscellaneous"  # in the  -Application- Column we replce values with "misc" to catagorise
+    
+        index = index + 1
+    # Step 2: Create a pivot table
+    app_chart2 = pd.pivot_table(df, values="Suration", index=["Window"],
+                                aggfunc=np.sum).reset_index()  # , columns=["Application"]
+    # Step 3: Add another column having application name, do se we will use a dictionaly to map sub-apps to app
+    df_dict = dict(zip(df.Window, df.Application))
+    app_chart2['apps'] = app_chart2['Window'].map(df_dict)  # "app_chart2" is the required dataframe
+    
+    # Step 4: Convert Datafrme to list and Sublist "chart2_list"
+    app_list = app_chart2.apps.unique()  # it is list of apps
+    # chart2_list = app_list.tolist()
+    # chart_list.append(chart2_list)
+    num_of_apps = [len(app_list)]  # total no. of apps
+    
+    
+    # chart_list.append(num_of_apps)
+    # print(app_chart2)
+    # for app in app_list: #here we extact sub-apps list and cumulative duration for each sub-apps for each
 
-# Step 1: Catagorise app with small duration into a "misc" app category
-index = 0
-for app in df["Application"]:
-    if (app in misc_apps):  # misc_apps is list of application/windows which were used for less than threshold time
-        df["Application"][
-            index] = "Miscellaneous"  # in the  -Application- Column we replce values with "misc" to catagorise
-    index = index + 1
-# Step 2: Create a pivot table
-app_chart2 = pd.pivot_table(df, values="Suration", index=["Window"],
-                            aggfunc=np.sum).reset_index()  # , columns=["Application"]
-# Step 3: Add another column having application name, do se we will use a dictionaly to map sub-apps to app
-df_dict = dict(zip(df.Window, df.Application))
-app_chart2['apps'] = app_chart2['Window'].map(df_dict)  # "app_chart2" is the required dataframe
-
-# Step 4: Convert Datafrme to list and Sublist "chart2_list"
-app_list = app_chart2.apps.unique()  # it is list of apps
-# chart2_list = app_list.tolist()
-# chart_list.append(chart2_list)
-num_of_apps = [len(app_list)]  # total no. of apps
-
-
-# chart_list.append(num_of_apps)
-# print(app_chart2)
-# for app in app_list: #here we extact sub-apps list and cumulative duration for each sub-apps for each
-def chart_of_app(app_name):
     chart_list2 = []
     app_wise_df = app_chart2[app_chart2["apps"] == app_name]
     # print(app_wise_df)
@@ -153,16 +156,35 @@ def chart_of_app(app_name):
 
 
 # send "chart2_list" to Chart.js
-def get_chart_data(app_no):
+def get_chart_data(data):
+    print("Selecting App")
     chart_list = []
-    chart_list2 = chart_of_app(app_no)
-    chart_list.append(chart_list1)
-    chart_list.append(chart_list2)
+    if data.get("y") is None:
+        data = data.get("dick")
+        #print(type(data))
+        year = data.get("year")
+        app_name = data.get("app")
+        print(year, app_name)
+        df_date = get_date_specific_log()
+        chart_list1, misc_apps = chart_of_apps(df_date)
+        chart_list2 = chart_of_subapps(df_date, misc_apps, app_name)
+        chart_list.append(chart_list1)
+        chart_list.append(chart_list2)
+    else:
+        print("Go/Home Button")
+        year = data.get("y")
+        app_name =  "Miscellaneous"
+        print(year, app_name)
+        df_date = get_date_specific_log()
+        chart_list1, misc_apps = chart_of_apps(df_date)
+        chart_list2 = chart_of_subapps(df_date, misc_apps, app_name)
+        chart_list.append(chart_list1)
+        chart_list.append(chart_list2)
     return chart_list
 
 
 # Define an flask server app
-print(get_chart_data(3))
+#print(get_chart_data(3))
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -176,9 +198,16 @@ def index():
 # set a socket to send message
 @socketio.on('message')
 def message(data):
-    print(f"/n/n{data}/n/n")
+    print(f"{data}")
+    app_name = "Miscellaneous"
+    chart_list = []
+    df_date = get_date_specific_log()
+    chart_list1, misc_apps = chart_of_apps(df_date)
+    chart_list2 = chart_of_subapps(df_date, misc_apps, app_name)
+    chart_list.append(chart_list1)
+    chart_list.append(chart_list2)
 
-    data = get_chart_data(" Google Chrome")
+    data = chart_list
     send(data, broadcast=True)
 
 
@@ -190,8 +219,8 @@ def detail():
 @socketio.on('msg')
 def message(data):
     print(data)
-    data["label"]
-    data = get_chart_data(data["label"])
+
+    data = get_chart_data(data)
 
     emit('message', data)
 
