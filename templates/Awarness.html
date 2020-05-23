@@ -8,6 +8,7 @@
   <title>AWaRe</title>
     <!-- //link the file to chart.js javascript file -->
   <script src={{ url_for('static', filename='scripts/Chart.js') }}></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
   
     <!-- //link the file to css file -->
   <link href={{ url_for('static', filename='style/tabs.css') }} rel="stylesheet" type="css"></link> 
@@ -22,9 +23,11 @@
 <body>
 
 </body>
+<script src={{ url_for('static', filename='scripts/report.js') }}></script>	
 <script>
 function openCity(evt, cityName) {
   // Declare all variables
+  var socket = io.connect('http://localhost:5000');
   var i, tabcontent, tablinks;
 
   // Get all elements with class="tabcontent" and hide them
@@ -41,25 +44,43 @@ function openCity(evt, cityName) {
 
   // Show the current tab, and add an "active" class to the button that opened the tab
   document.getElementById(cityName).style.display = "block";
-  evt.currentTarget.className += " active";
-}
+  if (cityName == 'Activity Summary') {
+  var y = document.getElementById("start").value;  
+  socket.emit('msg',{y});
+  console.log(`Go Home: ${y};`);
+  evt.currentTarget.className += " active";}
+	}
+</script>
+
+<script>
 
 </script>
-    <!-- Tab links -->
+    
 	<input type="date" id="start" name="trip-start"
-       value="2018-07-22"
+       value= "2020-05-22"
        min="2018-05-05" max="2018-12-31">
+	<script>
+	var today = new Date();
+	var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+	
+	
+	var date_str = date.toString();
+	<!-- console.log(`today date: ${date_str};`) -->
+	document.getElementById("start").value = "2020-05-22"
+	document.getElementById("start").min = "2018-05-10"
+    document.getElementById("start").max = "2020-12-20"
+	</script>
 	   
 	   
 
 
-	<button class="go" id = "go">GO</button></div>
+	<!-- need to set all date as variable-->
 	
 
     <!-- Tab links -->
     
 	  
-      <button class="tablinks" onclick="openCity(event, 'Activity Summary')" id="defaultOpen">Home</button>
+      <button class="tablinks" onclick="openCity(event, 'Activity Summary')" id="defaultOpen">GO/HOME</button>
       <button class="tablinks" onclick="openCity(event, 'Activity Detail')" id = "detail" style="display: none">Activity Detail</button>
       
     
@@ -80,11 +101,11 @@ function openCity(evt, cityName) {
 <script>
 // Get the element with id="defaultOpen" and click on it
 document.getElementById("defaultOpen").click();
-</script>  
+</script>   
   
 
-<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
-<script src={{ url_for('static', filename='scripts/report.js') }}></script>	
+<!-- <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script> -->
+
 	
 	
 
