@@ -13,21 +13,28 @@
 # Importing Necessary Library
 import pandas as pd
 import numpy as np
+from datetime import date
 import datetime
 
 import socketio
 from flask import Flask, render_template, jsonify, url_for
 from flask_socketio import SocketIO, send, emit
+today = date.today()
+date = "2020-05-15"
 
 
-def get_date_specific_log():
+
+def get_date_specific_log(date):
+
     # Import the csv generated using the aware utility and converting the time string into date time format
-    df = pd.read_csv("awl.csv", index_col='Unnamed: 0')
+    df = pd.read_csv("C:/Users/manis/PycharmProjects/Jupyter projects/awl.csv", index_col='Unnamed: 0') #C:/Users/manis/Desktop/
+
     # drop the first row which is used as a marker and to find the time difference between application
     df = df.drop(0)
     df = df.reset_index(drop=True)
     # Fill all the empty cell with Ideal value
     df.fillna('Ideal', inplace=True)
+
 
     # Step 2: CHART 1
     # Create a datafrme which cab be used to plot chart, in same way way as we do in excel. Alternative suggesion are welcome
@@ -44,8 +51,12 @@ def get_date_specific_log():
         app = app[-1]
         df.loc[index, "Application"] = app  # step2
         index = index + 1
+    max_date = df['Time Stamp'][0][:10]
+    min_date = df['Time Stamp'][df.last_valid_index()][:10]
+    df = df[df['Time Stamp'].map(lambda x: date in x)]
+
     df_date = df
-    return df_date
+    return df_date, max_date, min_date
 
 # IMPROVEMENT
 # 1. Avoid Use of For Loop
@@ -56,6 +67,7 @@ def get_date_specific_log():
 # Convert the dataframe into list
 
 def chart_of_apps(df):
+
     # Declearing a list which will be sent to chart.js
     chart_list1 = []
 
@@ -89,6 +101,7 @@ def chart_of_apps(df):
     app_chart1["Duration"] = (app_chart1.Suration / 60).astype('int32')
     chart_list1.append(app_chart1["Duration"].tolist())
     chart_list1.append(len(app_chart1))
+    #print(chart_list1)
     return chart_list1, misc_apps
     # print(app_chart1)
 
@@ -119,10 +132,11 @@ def chart_of_subapps(df,misc_apps, app_name):
     # Step 2: Create a pivot table
     app_chart2 = pd.pivot_table(df, values="Suration", index=["Window"],
                                 aggfunc=np.sum).reset_index()  # , columns=["Application"]
+    print(app_chart2)
     # Step 3: Add another column having application name, do se we will use a dictionaly to map sub-apps to app
     df_dict = dict(zip(df.Window, df.Application))
     app_chart2['apps'] = app_chart2['Window'].map(df_dict)  # "app_chart2" is the required dataframe
-    
+    print(app_chart2)
     # Step 4: Convert Datafrme to list and Sublist "chart2_list"
     app_list = app_chart2.apps.unique()  # it is list of apps
     # chart2_list = app_list.tolist()
@@ -136,52 +150,67 @@ def chart_of_subapps(df,misc_apps, app_name):
 
     chart_list2 = []
     app_wise_df = app_chart2[app_chart2["apps"] == app_name]
-    # print(app_wise_df)
+    print("whats this", app_wise_df)
     app_wise_df = app_wise_df.sort_values("Suration", axis=0, ascending=False, na_position='last').reset_index(
         drop=True)
     app_wise_df = app_wise_df[app_wise_df["Suration"] > 2]
     #print(app_wise_df)
-
+    print(app_wise_df.Window)
     sub_list_window = app_wise_df.Window.tolist()
+    print(sub_list_window)
     chart_list2.append(sub_list_window)
     app_wise_df["Duration"] = (app_wise_df["Suration"] / 60).astype('int32')
     app_wise_df = app_wise_df[app_wise_df["Duration"] > 0]
-    sub_list_Duration = app_wise_df["Duration"].tolist()
-    chart_list2.append(sub_list_Duration)
+    sub_list_duration = app_wise_df["Duration"].tolist()
+    chart_list2.append(sub_list_duration)
     chart_list2.append(app_name)
     chart_list2.append(len(sub_list_window))
+    # today = str(date.today())
+    # print(type(today))
+    # print(today)
+    chart_list2.append(date)
+
     # send "chart2_list" to Chart.js
-    # print(chart_list2)
+    print(chart_list2)
     return chart_list2
 
 
 # send "chart2_list" to Chart.js
-def get_chart_data(data):
-    print("Selecting App")
+def get_chart_data(data, df_date, max_date, min_date ):
+    print(data)
     chart_list = []
     if data.get("y") is None:
-        data = data.get("dick")
-        #print(type(data))
-        year = data.get("year")
-        app_name = data.get("app")
-        print(year, app_name)
-        df_date = get_date_specific_log()
+        app_name = data.get("label")
+        print("getting data of sub app", app_name)
         chart_list1, misc_apps = chart_of_apps(df_date)
+        print("step 1 completed")
         chart_list2 = chart_of_subapps(df_date, misc_apps, app_name)
+        print("step 2 completed")
         chart_list.append(chart_list1)
+        print("step 3 completed")
         chart_list.append(chart_list2)
+        print("step 4 completed")
+        chart_list.append(max_date)
+        chart_list.append(min_date)
     else:
-        print("Go/Home Button")
         year = data.get("y")
-        app_name =  "Miscellaneous"
-        print(year, app_name)
-        df_date = get_date_specific_log()
+        print("getting data of", year)
+        df_date, max_date, min_date = get_date_specific_log(year)
+        print(df_date)
+        app_name = "Misces"
+        print("Go/Home Button:",year, app_name)
         chart_list1, misc_apps = chart_of_apps(df_date)
+        print("step 1 completed")
         chart_list2 = chart_of_subapps(df_date, misc_apps, app_name)
+        print("step 2 completed")
         chart_list.append(chart_list1)
+        print("step 3 completed",chart_list1)
         chart_list.append(chart_list2)
+        print("step 4 completed",chart_list2)
+        chart_list.append(max_date)
+        chart_list.append(min_date)
+        #print(chart_list)
     return chart_list
-
 
 # Define an flask server app
 #print(get_chart_data(3))
@@ -199,13 +228,16 @@ def index():
 @socketio.on('message')
 def message(data):
     print(f"{data}")
-    app_name = "Miscellaneous"
+
+    app_name = "Misce"#llaneous"
     chart_list = []
-    df_date = get_date_specific_log()
+    df_date, max_date, min_date = get_date_specific_log(date)
     chart_list1, misc_apps = chart_of_apps(df_date)
     chart_list2 = chart_of_subapps(df_date, misc_apps, app_name)
     chart_list.append(chart_list1)
     chart_list.append(chart_list2)
+    chart_list.append(max_date)
+    chart_list.append(min_date)
 
     data = chart_list
     send(data, broadcast=True)
@@ -219,8 +251,9 @@ def detail():
 @socketio.on('msg')
 def message(data):
     print(data)
+    df_date_wise, max_date, min_date  = get_date_specific_log(date)
 
-    data = get_chart_data(data)
+    data = get_chart_data(data, df_date_wise, max_date, min_date )
 
     emit('message', data)
 
