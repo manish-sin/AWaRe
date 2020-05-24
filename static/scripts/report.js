@@ -7,7 +7,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
 	})
 	
 	
-	
+	function go(){
+	  var socket = io.connect('http://localhost:5000');
+	  var y = document.getElementById("start").value;  
+	  socket.emit('msg',{y});
+	  console.log(`Go Home: ${y};`);
+	  
+	  }
 	
 	
 	
@@ -20,8 +26,19 @@ document.addEventListener('DOMContentLoaded', ()=>{
 		/* console.log(`App Count: ${data[0][2]};`)*/
 		console.log(`Choosen Apps Name: ${data[1][2]};`)
 		/* console.log(`Sub-app Duration: ${data[1][1]};`)
-		console.log(`Sub-app Name: ${data[1][0]};`)  
+		console.log(`Sub-app Name: ${data[1][0]};`)
 		console.log(`Sub_app Count: ${data[1][3]};`)*/ 
+		console.log(`Today's Date: ${data};`)
+		console.log(`Max Date: ${data[2]};`)
+		console.log(`Min Date: ${data[3]};`)
+		var recived_date = data[1][4];
+		document.getElementById("start").value = recived_date;
+		document.getElementById("start").min = data[2]
+		document.getElementById("start").max = data[3]
+		
+		
+		
+	
 		
 	
 		
@@ -80,13 +97,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
 		}
 		
 	};
-	var pie_chart = new Chart(document.getElementById("pie-chart"), a );
-	
-	
-	
+	var pie_chart = new Chart(document.getElementById("pie-chart"), a );	
 
 	
 	var chrome_chart = new Chart(document.getElementById("chrome-chart"), b);
+
 	
 
 	
@@ -97,25 +112,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
         var idx = activePoints[0]['_index'];
 
         var label = chartData.labels[idx];
-        var value = chartData.datasets[0].data[idx];
-
-        
-        
-		
-		var y = "2020-05-22"
-		var dick = {year:y,app:label}
-		
-		socket.emit('msg',{dick} );
-		console.log(`Sub-app: ${y} , ${label} ;`)
+        var value = chartData.datasets[0].data[idx];  
+        socket.emit('msg',{label} );
+		console.log(`Sub-app: ${label} ;`)
 		document.getElementById("detail").click();
 		
-		
-		
-	  }	
-		
-	
-		
-		
+	  }			
        
       };
 	
