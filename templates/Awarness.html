@@ -25,9 +25,17 @@
 </body>
 <script src={{ url_for('static', filename='scripts/report.js') }}></script>	
 <script>
+function go(){
+	  var socket = io.connect('http://localhost:5000');
+	  var y = document.getElementById("start").value;  
+	  socket.emit('msg',{y});
+	  console.log(`Go Home: ${y};`);
+	  
+	  }
+</script>
+<script>
 function openCity(evt, cityName) {
   // Declare all variables
-  var socket = io.connect('http://localhost:5000');
   var i, tabcontent, tablinks;
 
   // Get all elements with class="tabcontent" and hide them
@@ -44,34 +52,25 @@ function openCity(evt, cityName) {
 
   // Show the current tab, and add an "active" class to the button that opened the tab
   document.getElementById(cityName).style.display = "block";
-  if (cityName == 'Activity Summary') {
-  var y = document.getElementById("start").value;  
-  socket.emit('msg',{y});
-  console.log(`Go Home: ${y};`);
-  evt.currentTarget.className += " active";}
-	}
+  evt.currentTarget.className += " active";
+}
 </script>
 
-<script>
 
-</script>
     
 	<input type="date" id="start" name="trip-start"
        value= "2020-05-22"
        min="2018-05-05" max="2018-12-31">
 	<script>
-	var today = new Date();
-	var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+	<!-- var today = recived_date; -->
+	<!-- var dates = today.getFullYear()+'-'+('0'+(today.getMonth()+1)).slice(-2)+'-'+('0'+(today.getDate())).slice(-2); -->
+	<!-- console.log(`Recived Date: ${dates};`)
+ -->
 	
 	
-	var date_str = date.toString();
-	<!-- console.log(`today date: ${date_str};`) -->
-	document.getElementById("start").value = "2020-05-22"
-	document.getElementById("start").min = "2018-05-10"
-    document.getElementById("start").max = "2020-12-20"
 	</script>
 	   
-	   
+	   <button class="go"  onclick="go()" id="go">GO</button>
 
 
 	<!-- need to set all date as variable-->
@@ -80,7 +79,7 @@ function openCity(evt, cityName) {
     <!-- Tab links -->
     
 	  
-      <button class="tablinks" onclick="openCity(event, 'Activity Summary')" id="defaultOpen">GO/HOME</button>
+      <button class="tablinks" onclick="openCity(event, 'Activity Summary')" id="defaultOpen">HOME</button>
       <button class="tablinks" onclick="openCity(event, 'Activity Detail')" id = "detail" style="display: none">Activity Detail</button>
       
     
