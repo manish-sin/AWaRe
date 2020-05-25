@@ -24,15 +24,17 @@
 
 </body>
 <script src={{ url_for('static', filename='scripts/report.js') }}></script>	
-<script>
-function go(){
+<!-- <script>
+<!-- function go(){
+	  console.log(`Hi`);
 	  var socket = io.connect('http://localhost:5000');
 	  var y = document.getElementById("start").value;  
-	  socket.emit('msg',{y});
 	  console.log(`Go Home: ${y};`);
+	  socket.emit('msg',{y});
+	  
 	  
 	  }
-</script>
+</script> -->
 <script>
 function openCity(evt, cityName) {
   // Declare all variables
@@ -70,7 +72,7 @@ function openCity(evt, cityName) {
 	
 	</script>
 	   
-	   <button class="go"  onclick="go()" id="go">GO</button>
+	<button class="go" id="go">GO</button>
 
 
 	<!-- need to set all date as variable-->
