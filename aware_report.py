@@ -20,14 +20,14 @@ import socketio
 from flask import Flask, render_template, jsonify, url_for
 from flask_socketio import SocketIO, send, emit
 today = date.today()
-date = "2020-05-15"
+date = "2020-05-20"
 
 
 
 def get_date_specific_log(date):
 
     # Import the csv generated using the aware utility and converting the time string into date time format
-    df = pd.read_csv("C:/Users/manis/PycharmProjects/Jupyter projects/awl.csv", index_col='Unnamed: 0') #C:/Users/manis/Desktop/
+    df = pd.read_csv("awl.csv", index_col='Unnamed: 0') #C:/Users/manis/Desktop/
 
     # drop the first row which is used as a marker and to find the time difference between application
     df = df.drop(0)
@@ -73,6 +73,7 @@ def chart_of_apps(df):
 
     # Step1: Pivot table
     app_chart1 = pd.pivot_table(df, values="Suration", index=["Application"], aggfunc=np.sum).reset_index()
+    print(app_chart1)
     # Threshold duration to conside if an app needs to be put in mislaneous category
     thrashold = 30
     # basic declearation for dataframe manupulation
@@ -80,6 +81,7 @@ def chart_of_apps(df):
     misc = 0
     index = 0
     misc_apps = []  # declearling enpty list to store apps which will be placed in mislaneous category
+    print(app_chart1)
     for item in app_chart1["Suration"]:
         if (item < thrashold):  # Step 2: operation to be done for each row which are leaa than threshold
             if (item > low_threshold):
@@ -132,11 +134,11 @@ def chart_of_subapps(df,misc_apps, app_name):
     # Step 2: Create a pivot table
     app_chart2 = pd.pivot_table(df, values="Suration", index=["Window"],
                                 aggfunc=np.sum).reset_index()  # , columns=["Application"]
-    print(app_chart2)
+    #print(app_chart2)
     # Step 3: Add another column having application name, do se we will use a dictionaly to map sub-apps to app
     df_dict = dict(zip(df.Window, df.Application))
     app_chart2['apps'] = app_chart2['Window'].map(df_dict)  # "app_chart2" is the required dataframe
-    print(app_chart2)
+    #print(app_chart2)
     # Step 4: Convert Datafrme to list and Sublist "chart2_list"
     app_list = app_chart2.apps.unique()  # it is list of apps
     # chart2_list = app_list.tolist()
@@ -149,26 +151,28 @@ def chart_of_subapps(df,misc_apps, app_name):
     # for app in app_list: #here we extact sub-apps list and cumulative duration for each sub-apps for each
 
     chart_list2 = []
+    #print(app_name)
     app_wise_df = app_chart2[app_chart2["apps"] == app_name]
-    print("whats this", app_wise_df)
+    #print("whats this", app_wise_df)
     app_wise_df = app_wise_df.sort_values("Suration", axis=0, ascending=False, na_position='last').reset_index(
         drop=True)
     app_wise_df = app_wise_df[app_wise_df["Suration"] > 2]
     #print(app_wise_df)
-    print(app_wise_df.Window)
-    sub_list_window = app_wise_df.Window.tolist()
-    print(sub_list_window)
-    chart_list2.append(sub_list_window)
+    #print(app_wise_df.Window)
+
     app_wise_df["Duration"] = (app_wise_df["Suration"] / 60).astype('int32')
-    app_wise_df = app_wise_df[app_wise_df["Duration"] > 0]
+    #app_wise_df = app_wise_df[app_wise_df["Duration"] > 0]
+    sub_list_window = app_wise_df.Window.tolist()
+    #print(sub_list_window)
+    chart_list2.append(sub_list_window)
     sub_list_duration = app_wise_df["Duration"].tolist()
     chart_list2.append(sub_list_duration)
     chart_list2.append(app_name)
-    chart_list2.append(len(sub_list_window))
+    #chart_list2.append(len(sub_list_window))
     # today = str(date.today())
     # print(type(today))
     # print(today)
-    chart_list2.append(date)
+
 
     # send "chart2_list" to Chart.js
     print(chart_list2)
@@ -181,34 +185,39 @@ def get_chart_data(data, df_date, max_date, min_date ):
     chart_list = []
     if data.get("y") is None:
         app_name = data.get("label")
-        print("getting data of sub app", app_name)
+        #print("getting data of sub app", app_name)
         chart_list1, misc_apps = chart_of_apps(df_date)
-        print("step 1 completed")
+        #print("step 1 completed")
         chart_list2 = chart_of_subapps(df_date, misc_apps, app_name)
-        print("step 2 completed")
+        #print("step 2 completed")
         chart_list.append(chart_list1)
-        print("step 3 completed")
+        #print("step 3 completed")
         chart_list.append(chart_list2)
-        print("step 4 completed")
+        #print("step 4 completed")
         chart_list.append(max_date)
         chart_list.append(min_date)
+
+        chart_list.append("2020-05-20")
     else:
         year = data.get("y")
-        print("getting data of", year)
+
+        #print("getting data of", year)
         df_date, max_date, min_date = get_date_specific_log(year)
-        print(df_date)
-        app_name = "Misces"
-        print("Go/Home Button:",year, app_name)
+        #print(df_date)
+        app_name = "Miscellaneous"
+        #print("Go/Home Button:",year, app_name)
         chart_list1, misc_apps = chart_of_apps(df_date)
-        print("step 1 completed")
+        #print("step 1 completed")
         chart_list2 = chart_of_subapps(df_date, misc_apps, app_name)
-        print("step 2 completed")
+        #print("step 2 completed")
         chart_list.append(chart_list1)
-        print("step 3 completed",chart_list1)
+        #print("step 3 completed",chart_list1)
         chart_list.append(chart_list2)
-        print("step 4 completed",chart_list2)
+        #print("step 4 completed",chart_list2)
+
         chart_list.append(max_date)
         chart_list.append(min_date)
+        chart_list.append(year)
         #print(chart_list)
     return chart_list
 
@@ -229,7 +238,7 @@ def index():
 def message(data):
     print(f"{data}")
 
-    app_name = "Misce"#llaneous"
+    app_name = "Miscellaneous"#llaneous"
     chart_list = []
     df_date, max_date, min_date = get_date_specific_log(date)
     chart_list1, misc_apps = chart_of_apps(df_date)
@@ -238,8 +247,9 @@ def message(data):
     chart_list.append(chart_list2)
     chart_list.append(max_date)
     chart_list.append(min_date)
-
+    chart_list.append(date)
     data = chart_list
+    print(data)
     send(data, broadcast=True)
 
 
@@ -254,6 +264,7 @@ def message(data):
     df_date_wise, max_date, min_date  = get_date_specific_log(date)
 
     data = get_chart_data(data, df_date_wise, max_date, min_date )
+    print(data)
 
     emit('message', data)
 
