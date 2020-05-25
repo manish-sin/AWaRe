@@ -6,17 +6,16 @@ document.addEventListener('DOMContentLoaded', ()=>{
 		socket.send("I am connected"); 
 	})
 	
-	
-	function go(){
-	  var socket = io.connect('http://localhost:5000');
+	document.querySelector('#go').onclick= () => {
+	  console.log(`Hi`);
+	  
 	  var y = document.getElementById("start").value;  
+	  
 	  socket.emit('msg',{y});
 	  console.log(`Go Home: ${y};`);
 	  
-	  }
-	
-	
-	
+	  
+	  };
 
 	
 	socket.on('message', data=> {
@@ -26,12 +25,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
 		/* console.log(`App Count: ${data[0][2]};`)*/
 		console.log(`Choosen Apps Name: ${data[1][2]};`)
 		/* console.log(`Sub-app Duration: ${data[1][1]};`)
-		console.log(`Sub-app Name: ${data[1][0]};`)
-		console.log(`Sub_app Count: ${data[1][3]};`)*/ 
-		console.log(`Today's Date: ${data};`)
+		console.log(`Sub-app Name: ${data[1][0]};`)*/ 
+		console.log(`Sub_app Count: ${data};`)
+		console.log(`Today's Date: ${data[4]};`)
 		console.log(`Max Date: ${data[2]};`)
 		console.log(`Min Date: ${data[3]};`)
-		var recived_date = data[1][4];
+		var recived_date = data[4];
 		document.getElementById("start").value = recived_date;
 		document.getElementById("start").min = data[2]
 		document.getElementById("start").max = data[3]
@@ -97,7 +96,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
 		}
 		
 	};
-	var pie_chart = new Chart(document.getElementById("pie-chart"), a );	
+	var pie_chart = new Chart(document.getElementById("pie-chart"), a );
+	pie_chart.destroy();
+	pie_chart = new Chart(document.getElementById("pie-chart"), a );
 
 	
 	var chrome_chart = new Chart(document.getElementById("chrome-chart"), b);
