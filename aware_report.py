@@ -1,5 +1,5 @@
-
-
+#take 3 days log,
+#Print
 
 # Objective of this Files
 # In file we will write code to generate report form the log of AWaRe The Report will have two charts
