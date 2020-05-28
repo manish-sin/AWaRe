@@ -20,9 +20,10 @@ It
 ### Use case
 
 Case 1: Every professional estimate the time he will require to finish a task, before hi start, whether the task it to ppt, Finish a report or photoshop an image He/she will be able to monitor that by knowing how long did he use certain applications to achieve his task. If this is done on a regular basis he/she will be able to calibrate his self-efficacy. 
+
+For example: If I had decided to finish writing a certain part of this software, I should ask myself should I have taken 148 mins?
 Fig 1:
 <img src="Screenshot/App.png" width=600 >
-For example: If I had decided to finish writing a certain part of this software, I should ask myself should I have taken 148 mins?
 Case 2: Looking into detail of each app you can further filter out your NVA and distraction, like while doing a course, you spent more time on Netflix to freshen up. For me take away was I spent a lot of time searching emails, which means I have not organized my mail well (of course screenshot does not show my mail i.e ;). I will improve on that.
 Fig 2:
 <img src="Screenshot/Sub-app.png" width=600 >
