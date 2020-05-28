@@ -1,6 +1,6 @@
 from time import sleep
 import win32gui, pandas as pd
-import datetime
+import datetime, os
 datetime.datetime.now()
 aw = win32gui
 infinity = 0
@@ -9,9 +9,12 @@ AWR = "Dummy"
 i = 0
 duration = 0
 AWRF = "abc"
-columns = ["Time Stamp", "Window", "Suration"]
-awl = pd.DataFrame(columns=columns)
-awl_temp = pd.DataFrame(columns=columns)
+if os.path.exists('D:/temp/awl.csv'):
+    awl = pd.read_csv("D:/temp/awl.csv", index_col="Unnamed: 0")
+else:    
+    columns = ["Time Stamp", "Window", "Suration"]
+    awl = pd.DataFrame(columns=columns)
+
 while True:
     sleep(1)
     AWR = aw.GetWindowText(aw.GetForegroundWindow())
@@ -26,5 +29,5 @@ while True:
         AWRF = AWR
         awl_length = len(awl)
         awl.loc[awl_length] = to_append
-        awl.to_csv("awl.csv")
+        awl.to_csv("D:/temp/awl.csv")
     i = i + 1
