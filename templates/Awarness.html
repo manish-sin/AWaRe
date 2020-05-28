@@ -9,9 +9,11 @@
     <!-- //link the file to chart.js javascript file -->
   <script src={{ url_for('static', filename='scripts/Chart.js') }}></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
-  
-    <!-- //link the file to css file -->
-  <link href={{ url_for('static', filename='style/tabs.css') }} rel="stylesheet" type="css"></link> 
+
+	<link href='/tabs.css' rel="stylesheet" type="css"/>
+  <script src="https://d3js.org/d3.v3.min.js"></script> 
+  <!-- https://d3js.org/d3.v4.min.js
+  https://d3js.org/d3.v3.min.js -->
   
     
   
@@ -81,12 +83,17 @@ function openCity(evt, cityName) {
     <!-- Tab content -->
     <div id="Activity Summary" class="tabcontent">
 		<div><canvas id="pie-chart" width="300" height="100"></canvas></div>
-	  
-      
+	    
 	  
     </div>
 
     <div id="Activity Detail" class="tabcontent" >
+	<div >
+	<h1 id="heading">A heading here</h1>
+    <p>Duration(Mins)       &emsp;&emsp;           Window name</p>
+	<div class="chart-container">
+	<div id="chart"></div>
+	</div>
       <div><canvas id="chrome-chart" width="300" height="300"></canvas></div>
 	
 	  </div>
