@@ -14,8 +14,6 @@ It
   - Reports are interactive and easy to explore, with a clean interface.
   - Configurable for "Start on PC startup"
   
-### Instalation
-
 
 ### Use case
 
@@ -30,6 +28,10 @@ Fig 2:
 
 - Case 3: You may think of more and let us know ;)
 
+### Instalation
+
+### How to Turn Aware ON and OFF
+
 ### Exploring Report
 To open the report, make sure Aware is running  and then hit "http://localhost:5000/". 
 - Summary of all applications used
@@ -42,8 +44,8 @@ Note:
 - The sector in pie chart named "Miscellaneous" is aggregate of all apps Nun for less than 5 minutes
 - Anny window open for less than 5 sec are not logged
 
-### How to Turn it ON and OFF
-# FAQ:
+
+### FAQ:
 1. Why is there always a black window, while I run the Aware?
 Ans: So that you are aware that your information is being logged. Information is precious. We thought to start Aware as service was not a good idea as of know.
 2. Why report shows is only for 3 days?
@@ -52,6 +54,8 @@ Ans: We feel making a repository of such a report will lead to procrastination. 
 Ans: No it doesn't track anything else accept Name of Active Window.
 4. Is data logged by Aware safe?
 Ans: All logs are saved on your PC locally, it not sent over the internet. The code for Aware is available, you may check it.
+5. Some of the items among Horizontal bars has value zero, what does that mean?
+Ans: All the values shown are in minutes, hence Zero minutes mean that windows were open for less than a minute.
 
 
 
