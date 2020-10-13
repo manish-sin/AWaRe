@@ -2,6 +2,9 @@
 
 Aware is a tool to help you monitor self-efficacy (your confidence to finish a task in target time) while working on PC.
 
+### Download From Here
+https://github.com/manish-sin/Aware-app
+
 ### How does it work?
 It 
   - logs the name of active window and duration of activity on it
